@@ -1,25 +1,62 @@
-# 🧠 EnterpriseHomelab
+🧠 EnterpriseHomelab
+Homelab projetado para aplicar e demonstrar fundamentos de infraestrutura, monitoramento e orquestração, com foco em aprendizado técnico, documentação prática e portfólio profissional.
 
-Homelab projetado para aplicar e demonstrar fundamentos de infraestrutura, monitoramento e orquestração com foco em aprendizado e portfólio técnico.
+🛠️ Objetivo
+Construir um ambiente replicável de laboratório local utilizando máquinas virtuais provisionadas via Vagrant e VirtualBox. O projeto integra ferramentas de monitoramento (Zabbix + Grafana), orquestração (Docker e Minikube), simulação de produção com Windows Server (TSPlus) e alertas automatizados com bot no Telegram.
 
----
+🔧 Infraestrutura Atual
+Todas as VMs sobem localmente em modo bridge, permitindo comunicação real entre os serviços e dispositivos da rede.
 
-## 🛠️ Objetivo
+Nome da VM	IP	Função	Recursos
+monitor01	192.168.100.141	Servidor Zabbix com banco de dados	2GB RAM / 1 CPU
+grafana01	192.168.100.147	Visualização dos dados monitorados	1GB RAM / 1 CPU
+docker01	192.168.100.148	Ambiente de containers Docker/Kubernetes	2GB RAM / 2 CPUs
+tsplus01	192.168.100.157	Windows Server com TSPlus (simulação)	2GB RAM / 2 CPUs
+ZabbixAgent	192.168.100.162	Agente monitorado pela Zabbix	512MB RAM / 1 CPU
+📦 Componentes e Tecnologias
+Zabbix: coleta de métricas e monitoramento de rede
 
-Criar um ambiente replicável para estudos e testes utilizando VMs provisionadas com Vagrant e VirtualBox, monitoradas via Zabbix e visualizadas em Grafana. Também integra alertas com bot no Telegram e prepara o terreno para testes com Docker/Kubernetes.
+Grafana: dashboards visuais e triggers customizadas
 
----
+Docker & Minikube: orquestração e simulação de containers
 
-## 🔧 Infraestrutura Atual
+TSPlus: acesso remoto e ambiente corporativo simulado
 
-Todas as VMs sobem localmente em modo `bridge` para comunicação real com dispositivos da rede.
+Telegram Bot: alertas de eventos e falhas via webhook
 
-| Nome da VM       | IP               | Função                         | Recursos      |
-|------------------|------------------|--------------------------------|---------------|
-| ZabbixServer     | 192.168.100.160  | Servidor Zabbix com banco de dados | 2GB RAM / 1 CPU |
-| Grafana          | 192.168.100.161  | Visualização gráfica dos dados  | 1GB RAM / 1 CPU |
-| ZabbixAgent      | 192.168.100.162  | Agente monitorado via Zabbix   | 512MB RAM / 1 CPU |
+🚀 Como subir o ambiente
+Clone o repositório:
 
+bash
+git clone https://github.com/seu-usuario/EnterpriseHomelab.git
+cd EnterpriseHomelab
+Inicialize cada VM separadamente:
+
+bash
+cd monitor01 && vagrant up
+cd grafana01 && vagrant up
+cd docker01 && vagrant up
+cd tsplus01 && vagrant up
+Acesse os serviços:
+
+Zabbix: http://192.168.100.141/zabbix
+
+Grafana: http://192.168.100.147:3000
+
+RDP: mstsc para 192.168.100.157
+
+Docker/Kubernetes: via vagrant ssh docker01
+
+📡 Monitoramento Ativo
+O Zabbix está configurado para monitorar:
+
+Dispositivos na rede local (TV, PCs, roteador)
+
+A própria VM Windows Server
+
+Infraestrutura de containers via agentes
+
+Triggers com envio de alertas via Telegram Bot
 ---
 
 ## 📁 Estrutura de Pastas
