@@ -25,7 +25,121 @@ Todas as VMs sobem localmente em modo `bridge` para comunicação real com dispo
 ## 📁 Estrutura de Pastas
 
 ```plaintext
-C:\VMS\Homelab\
-├── ZabbixServer\     # Contém Vagrantfile e scripts do servidor Zabbix
-├── Grafana\          # Vagrantfile da VM com Grafana
-├── ZabbixAgent\      # Vagrantfile e configs do agente
+homelab-projeto/
+├── README.md
+├── tsplus01/
+│   ├── Vagrantfile
+│   └── notas-configuracao.md
+├── monitor01/
+│   ├── Vagrantfile
+│   └── setup-zabbix.md
+├── grafana01/
+│   ├── Vagrantfile
+│   └── dashboards.md
+├── docker01/
+│   ├── Vagrantfile
+│   ├── docker-compose.yml
+│   └── k8s/
+│       └── minikube-notes.md
+├── telegram-bot/
+│   └── zabbix-integration.md
+├── screenshots/
+│   └── dashboards.png
+└── LICENSE
+
+
+tsplus01 - Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.define "tsplus01" do |vm|
+    vm.vm.box = "gusztavvargadr/windows-server"
+    vm.vm.hostname = "tsplus01"
+
+    # Substitui private_network por public_network (bridge)
+    vm.vm.network "public_network", bridge: "Realtek PCIe GBE Family Controller", use_dhcp_assigned_default_route: true
+
+    vm.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+  end
+end
+
+
+---
+monitor01 - Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.define "monitor01" do |vm|
+    vm.vm.box = "ubuntu/focal64" # ou outro box
+    vm.vm.hostname = "monitor01"
+
+    # Remove private_network e usa modo bridge
+    vm.vm.network "public_network", bridge: "Realtek PCIe GBE Family Controller", use_dhcp_assigned_default_route: true
+
+    vm.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+
+    vm.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-agent
+    SHELL
+  end
+end
+
+----
+grafana01 - Vagrantfile
+
+Vagrant.configure("2") do |config|
+  config.vm.define "grafana01" do |vm|
+    vm.vm.box = "ubuntu/focal64" # ou outro box
+    vm.vm.hostname = "grafana01"
+
+    # Remove private_network e usa modo bridge
+    vm.vm.network "public_network", bridge: "Realtek PCIe GBE Family Controller", use_dhcp_assigned_default_route: true
+
+    vm.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+end
+    vm.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install -y grafana
+    SHELL
+  end
+end
+
+
+---
+docker01 - Vagrantfile
+
+Vagrant.configure("2") do |config|
+  config.vm.define "docker01" do |vm|
+    vm.vm.box = "ubuntu/focal64" # ou outro box
+    vm.vm.hostname = "docker01"
+
+    # Remove private_network e usa modo bridge
+    vm.vm.network "public_network", bridge: "Realtek PCIe GBE Family Controller", use_dhcp_assigned_default_route: true
+
+    vm.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+end
+    vm.vm.provision "shell", inline: <<-SHELL
+      echo "Provisionamento inicial"
+    SHELL
+ 
+    vm.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install -y docker.io
+      sudo usermod -aG docker vagrant
+      curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+      sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    SHELL
+  end
+end
+
+
+
+
+
